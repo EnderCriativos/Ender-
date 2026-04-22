@@ -941,6 +941,123 @@
     el.classList.toggle('open');
   }
 </script>
-
+<!-- ── PROTEÇÃO POR SENHA ── cola antes do </body> ──────────────────── -->
+<style>
+  #lock-screen {
+    position: fixed; inset: 0; z-index: 99999;
+    background: #061a2e;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+  }
+  #lock-screen.hidden { display: none; }
+  .lock-box {
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+  }
+  .lock-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.2);
+    margin-bottom: 8px;
+  }
+  .lock-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .lock-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.04em;
+  }
+  .lock-input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    padding: 14px 24px;
+    text-align: center;
+    outline: none;
+    width: 240px;
+    transition: border-color 0.2s;
+  }
+  .lock-input:focus { border-color: rgba(200,169,110,0.5); }
+  .lock-input.error { border-color: rgba(255,80,80,0.6); animation: shake 0.35s ease; }
+  .lock-btn {
+    background: #c8a96e;
+    color: #061a2e;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 14px 40px;
+    border: none; border-radius: 3px;
+    cursor: pointer;
+    width: 240px;
+    transition: opacity 0.2s;
+  }
+  .lock-btn:hover { opacity: 0.85; }
+  .lock-err {
+    font-size: 12px;
+    color: rgba(255,80,80,0.75);
+    letter-spacing: 0.06em;
+    min-height: 16px;
+  }
+  @keyframes shake {
+    0%,100%{ transform: translateX(0) }
+    25%    { transform: translateX(-8px) }
+    75%    { transform: translateX(8px) }
+  }
+</style>
+ 
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo">ENDER</div>
+    <div class="lock-title">Acesso restrito</div>
+    <div class="lock-sub">Insira a senha para visualizar a proposta</div>
+    <input
+      id="lock-input"
+      class="lock-input"
+      type="password"
+      placeholder="••••••••"
+      autocomplete="off"
+      onkeydown="if(event.key==='Enter') checkPass()"
+    />
+    <button class="lock-btn" onclick="checkPass()">ENTRAR →</button>
+    <div class="lock-err" id="lock-err"></div>
+  </div>
+</div>
+ 
+<script>
+  (function() {
+    const KEY = 'ender_isvp_auth';
+    const PASS = 'coreup';
+    if (sessionStorage.getItem(KEY) === '1') unlock();
+ 
+    function unlock() {
+      document.getElementById('lock-screen').classList.add('hidden');
+    }
+ 
+    window.checkPass = function() {
+      const input = document.getElementById('lock-input');
+      const err   = document.getElementById('lock-err');
+      if (input.value === PASS) {
+        sessionStorage.setItem(KEY, '1');
+        unlock();
+      } else {
+        err.textContent = 'Senha incorreta. Tente novamente.';
+        input.value = '';
+        input.classList.add('error');
+        setTimeout(() => input.classList.remove('error'), 400);
+        input.focus();
+      }
+    };
+  })();
+</script>
+<!-- ── FIM PROTEÇÃO ─────────────────────────────────────────────────── -->
 </body>
 </html>
