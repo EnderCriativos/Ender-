@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ender × ISVP — Proposta Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #061a2e;
+    --navy-mid: #0a2540;
+    --blue: #1a5fa8;
+    --sky: #4db8e8;
+    --light: #e8f4fb;
+    --white: #ffffff;
+    --gold: #c8a96e;
+    --green: #2eb87a;
+    --text-muted: rgba(255,255,255,0.5);
+    --text-dim: rgba(255,255,255,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(200,169,110,0.35);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.35s ease;
+  }
+
+  /* ── NOISE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none; z-index: 100;
+  }
+
+  /* ── REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.22s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+  .reveal-delay-4 { transition-delay: 0.5s; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 22px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(6,26,46,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(0px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 5px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-tag {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 120px 48px 80px;
+    text-align: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 40%, rgba(26,95,168,0.22) 0%, transparent 70%),
+      radial-gradient(ellipse 35% 35% at 15% 85%, rgba(200,169,110,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 30% at 85% 20%, rgba(77,184,232,0.08) 0%, transparent 60%);
+  }
+  .hero-lines {
+    position: absolute; inset: 0; overflow: hidden; opacity: 0.06;
+  }
+  .hero-lines svg { width: 100%; height: 100%; }
+
+  .hero-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .hero-kicker::before, .hero-kicker::after {
+    content: ''; display: block; width: 28px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 8vw, 100px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  .hero h1 .accent { color: var(--gold); font-style: italic; }
+
+  .hero-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(18px, 3vw, 28px);
+    letter-spacing: 6px;
+    color: var(--sky);
+    margin-bottom: 36px;
+    opacity: 0.85;
+  }
+
+  .hero-desc {
+    max-width: 560px;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 60px;
+  }
+
+  .hero-meta {
+    display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 36px;
+  }
+  .meta-item { text-align: center; }
+  .meta-item label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .meta-item span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-dim); animation: bounce 2.5s infinite;
+  }
+  .scroll-hint span { display: block; width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── SEÇÕES ── */
+  section {
+    padding: 100px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  section.full { max-width: none; padding-left: 0; padding-right: 0; }
+
+  .section-kicker {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-kicker::before {
+    content: ''; display: block; width: 28px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .section-title .italic { font-style: italic; color: var(--sky); }
+
+  .section-lead {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 580px;
+    margin-bottom: 60px;
+  }
+
+  /* ── POSICIONAMENTO ── */
+  .pos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .pos-card {
+    background: var(--navy-mid);
+    padding: 40px;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .pos-card:hover { background: rgba(26,95,168,0.18); }
+  .pos-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .pos-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .pos-num {
+    position: absolute; top: 32px; right: 32px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+  }
+
+  /* ── SEPARADOR ── */
+  .sep {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    margin: 0 48px;
+  }
+
+  /* ── BLOCOS ── */
+  .blocos-wrap { display: flex; flex-direction: column; gap: 2px; }
+
+  .bloco-item {
+    background: var(--navy-mid);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .bloco-item.open { border-color: rgba(200,169,110,0.3); }
+
+  .bloco-header-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 40px;
+    user-select: none;
+  }
+
+  .bloco-left { display: flex; align-items: center; gap: 28px; }
+
+  .bloco-num-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .bloco-titulo-h {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .bloco-right { display: flex; align-items: center; gap: 32px; }
+
+  .bloco-valor-h {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    text-align: right;
+  }
+  .bloco-valor-h small {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .bloco-arrow {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: transform 0.35s ease, border-color 0.3s;
+    color: var(--text-muted);
+  }
+  .bloco-item.open .bloco-arrow { transform: rotate(180deg); border-color: var(--gold); color: var(--gold); }
+
+  .bloco-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+  }
+  .bloco-item.open .bloco-body { max-height: 800px; }
+
+  .bloco-inner {
+    padding: 0 40px 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .bloco-desc-text {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin: 28px 0 28px;
+    max-width: 600px;
+  }
+
+  .entregaveis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    transition: background 0.2s;
+  }
+  .ent-item:hover { background: rgba(77,184,232,0.08); }
+  .ent-item::before {
+    content: '→';
+    color: var(--sky);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── TOTAL ── */
+  .total-section {
+    background: linear-gradient(135deg, rgba(26,95,168,0.15) 0%, rgba(200,169,110,0.08) 100%);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 6px;
+    padding: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .total-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .total-left h2 em { font-style: italic; color: var(--gold); }
+  .total-left p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .total-rows {}
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    gap: 24px;
+  }
+  .total-row label {
+    font-size: 13px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .total-row .val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: var(--white);
+    white-space: nowrap;
+  }
+  .total-row.highlight {
+    border-bottom: none;
+    margin-top: 12px;
+    padding-top: 24px;
+  }
+  .total-row.highlight label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .total-row.highlight .val {
+    font-size: 42px;
+    color: var(--gold);
+  }
+
+  .badge-desc {
+    display: inline-block;
+    background: rgba(46,184,122,0.18);
+    border: 1px solid rgba(46,184,122,0.3);
+    color: var(--green);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  /* ── GESTÃO MENSAL ── */
+  .gestao-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(77,184,232,0.2);
+    border-radius: 6px;
+    padding: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .gestao-left h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .gestao-left h3 em { font-style: italic; color: var(--sky); }
+  .gestao-left p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 36px;
+  }
+
+  .gestao-preco {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 2px;
+    color: var(--sky);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .gestao-preco small {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .gestao-items { display: flex; flex-direction: column; gap: 0; }
+  .g-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+  }
+  .g-item:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+  .g-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(77,184,232,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  /* ── PRAZO ── */
+  .prazo-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-left: 3px solid var(--sky);
+    border-radius: 4px;
+    padding: 28px 36px;
+  }
+  .prazo-bar .prazo-icon { font-size: 26px; flex-shrink: 0; }
+  .prazo-bar h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.16em;
+    color: var(--sky);
+    margin-bottom: 4px;
+  }
+  .prazo-bar p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── CTA ── */
+  .cta-section {
+    text-align: center;
+    padding: 100px 48px;
+    position: relative; overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(26,95,168,0.18) 0%, transparent 70%);
+  }
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--gold); }
+  .cta-section p {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 44px;
+    line-height: 1.8;
+    position: relative; z-index: 1;
+  }
+  .cta-btns {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 16px 36px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: transparent;
+    color: var(--white);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 16px 36px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.25);
+  }
+  footer p {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  footer a { color: var(--gold); text-decoration: none; opacity: 0.75; }
+  footer a:hover { opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .hero { padding: 100px 24px 70px; }
+    section { padding: 70px 24px; }
+    .sep { margin: 0 24px; }
+    .pos-grid { grid-template-columns: 1fr; }
+    .bloco-header-btn { padding: 24px; flex-wrap: wrap; gap: 16px; }
+    .bloco-inner { padding: 0 24px 32px; }
+    .entregaveis-grid { grid-template-columns: 1fr; }
+    .total-section { grid-template-columns: 1fr; padding: 36px 28px; gap: 40px; }
+    .gestao-card { grid-template-columns: 1fr; padding: 36px 28px; gap: 36px; }
+    .cta-section { padding: 70px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">ENDER</a>
+  <span class="nav-tag">Proposta Comercial · ISVP</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="max-width:none; padding-left:48px; padding-right:48px; margin:0;">
+  <div class="hero-bg"></div>
+  <div class="hero-lines">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="350" x2="1200" y2="350" stroke="white" stroke-width="0.5"/>
+      <line x1="600" y1="0" x2="600" y2="700" stroke="white" stroke-width="0.5"/>
+      <circle cx="600" cy="350" r="200" stroke="white" stroke-width="0.5" fill="none"/>
+      <circle cx="600" cy="350" r="320" stroke="white" stroke-width="0.3" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="hero-kicker reveal">Proposta Comercial Exclusiva</div>
+
+  <h1 class="reveal reveal-delay-1">
+    Instituto<br><span class="accent">Saúde</span><br>Vida Plena
+  </h1>
+
+  <div class="hero-sub reveal reveal-delay-2">ISVP · Marca do Zero</div>
+
+  <p class="hero-desc reveal reveal-delay-3">
+    Branding, identidade digital e conteúdo de marca para um instituto que precisa transmitir credibilidade, competência e confiança ao setor público e privado de saúde.
+  </p>
+
+  <div class="hero-meta reveal reveal-delay-4">
+    <div class="meta-item">
+      <label>Cliente</label>
+      <span>ISVP</span>
+    </div>
+    <div class="meta-item">
+      <label>Prazo</label>
+      <span>30 Dias</span>
+    </div>
+    <div class="meta-item">
+      <label>Agência</label>
+      <span>Ender</span>
+    </div>
+    <div class="meta-item">
+      <label>Escopo</label>
+      <span>Branding + Site + Social</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    role
+    <span></span>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- POSICIONAMENTO -->
+<section>
+  <div class="section-kicker reveal">O contexto</div>
+  <h2 class="section-title reveal reveal-delay-1">O setor fala igual.<br><span class="italic">Esse é o problema.</span></h2>
+  <p class="section-lead reveal reveal-delay-2">Humanização, excelência, transparência. Todo instituto de gestão em saúde usa as mesmas palavras. A ISVP precisa de uma marca que vá além do discurso — e que faça o gestor público justificar a escolha sem esforço.</p>
+
+  <div class="pos-grid">
+    <div class="pos-card reveal">
+      <div class="pos-num">01</div>
+      <h3>Credibilidade visível</h3>
+      <p>Quem decide uma licitação ou contratação direta precisa se sentir seguro. A marca precisa transmitir isso antes de qualquer conversa.</p>
+    </div>
+    <div class="pos-card reveal reveal-delay-1">
+      <div class="pos-num">02</div>
+      <h3>Identidade que cobre tudo</h3>
+      <p>Gestão hospitalar, atenção primária, UPA, saúde pública e privada. A ISVP atua em múltiplas frentes — a marca precisa ser sólida o suficiente para cobrir todas sem parecer vaga.</p>
+    </div>
+    <div class="pos-card reveal reveal-delay-2">
+      <div class="pos-num">03</div>
+      <h3>Do zero ao profissional</h3>
+      <p>Sem legado. Sem vícios de comunicação. Uma oportunidade rara de construir do jeito certo desde o primeiro dia.</p>
+    </div>
+    <div class="pos-card reveal reveal-delay-3">
+      <div class="pos-num">04</div>
+      <h3>A barra está baixa</h3>
+      <p>Os concorrentes têm sites frios e linguagem burocrática. Um instituto com identidade forte e presença digital coerente se destaca sem esforço.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- BLOCOS DE ESCOPO -->
+<section>
+  <div class="section-kicker reveal">Escopo do projeto</div>
+  <h2 class="section-title reveal reveal-delay-1">O que a<br><span class="italic">Ender entrega.</span></h2>
+  <p class="section-lead reveal reveal-delay-2">Três blocos de trabalho, pensados para funcionar juntos e ser contratados em conjunto. Cada um com entregas claras, sem achismo.</p>
+
+  <div class="blocos-wrap">
+
+    <!-- BLOCO 1 -->
+    <div class="bloco-item reveal open" id="bloco1">
+      <div class="bloco-header-btn" onclick="toggleBloco('bloco1')">
+        <div class="bloco-left">
+          <span class="bloco-num-tag">Bloco 01</span>
+          <span class="bloco-titulo-h">Branding &amp; Conteúdo de Marca</span>
+        </div>
+        <div class="bloco-right">
+          <div class="bloco-valor-h">
+            R$ 6.500
+            <small>valor do bloco</small>
+          </div>
+          <div class="bloco-arrow">▾</div>
+        </div>
+      </div>
+      <div class="bloco-body">
+        <div class="bloco-inner">
+          <p class="bloco-desc-text">Antes de desenhar qualquer coisa, entendemos o negócio por dentro. O resultado é uma marca que tem razão de ser — não apenas estética.</p>
+          <div class="entregaveis-grid">
+            <div class="ent-item">Posicionamento e diferencial de marca</div>
+            <div class="ent-item">Naming refinado + justificativa estratégica (ISVP)</div>
+            <div class="ent-item">Identidade visual — logo, paleta, tipografia, grid</div>
+            <div class="ent-item">Tom de voz e linguagem institucional</div>
+            <div class="ent-item">Manual de marca (versão executiva)</div>
+            <div class="ent-item">Papelaria — cartão, timbrado, assinatura de e-mail, crachá</div>
+            <div class="ent-item">Pilares editoriais para redes sociais</div>
+            <div class="ent-item">Pack de lançamento — primeiros posts Instagram + LinkedIn</div>
+            <div class="ent-item">Templates de identidade visual para social media</div>
+            <div class="ent-item">Tom de voz por plataforma</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCO 2 -->
+    <div class="bloco-item reveal reveal-delay-1" id="bloco2">
+      <div class="bloco-header-btn" onclick="toggleBloco('bloco2')">
+        <div class="bloco-left">
+          <span class="bloco-num-tag">Bloco 02</span>
+          <span class="bloco-titulo-h">Site Institucional</span>
+        </div>
+        <div class="bloco-right">
+          <div class="bloco-valor-h">
+            R$ 3.500 – 4.500
+            <small>a definir por escopo final</small>
+          </div>
+          <div class="bloco-arrow">▾</div>
+        </div>
+      </div>
+      <div class="bloco-body">
+        <div class="bloco-inner">
+          <p class="bloco-desc-text">Um site que trabalha pela marca — não apenas exibe informação. Arquitetura, copy e design pensados para transmitir credibilidade ao gestor público.</p>
+          <div class="entregaveis-grid">
+            <div class="ent-item">Arquitetura de informação estratégica</div>
+            <div class="ent-item">Copywriting de todas as páginas</div>
+            <div class="ent-item">Design UI responsivo (mobile + desktop)</div>
+            <div class="ent-item">Desenvolvimento e publicação</div>
+            <div class="ent-item">Home — posicionamento e credibilidade</div>
+            <div class="ent-item">Quem Somos + O que Fazemos</div>
+            <div class="ent-item">Onde Estamos + Transparência</div>
+            <div class="ent-item">Contato + configuração de domínio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- TOTAL -->
+<section>
+  <div class="section-kicker reveal">Investimento</div>
+  <h2 class="section-title reveal reveal-delay-1">Os números,<br><span class="italic">sem mistério.</span></h2>
+
+  <div class="total-section reveal reveal-delay-2">
+    <div class="total-left">
+      <h2>Fechando tudo junto,<br><em>faz sentido.</em></h2>
+      <p>Branding, site e conteúdo de marca construídos em paralelo por uma única equipe. Mais coerência, mais velocidade, menos retrabalho. Por isso existe o pacote fechado com desconto.</p>
+    </div>
+    <div class="total-rows">
+      <div class="total-row">
+        <label>Branding + Conteúdo de Marca (Blocos 01)</label>
+        <div class="val">R$ 6.500</div>
+      </div>
+      <div class="total-row">
+        <label>Site Institucional (Bloco 02)</label>
+        <div class="val">R$ 3.500 – 4.500</div>
+      </div>
+      <div class="total-row">
+        <label>Subtotal (sem desconto)</label>
+        <div class="val">R$ 10 – 11k</div>
+      </div>
+      <div class="total-row highlight">
+        <label>Pacote Completo <span class="badge-desc">Desconto</span></label>
+        <div class="val">R$ 9.000</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- GESTÃO MENSAL -->
+<section>
+  <div class="section-kicker reveal">Após o lançamento</div>
+  <h2 class="section-title reveal reveal-delay-1">Gestão de Marca<br><span class="italic">Mensal.</span></h2>
+  <p class="section-lead reveal reveal-delay-2">A marca lançada precisa de consistência para ganhar força. Nosso pacote mensal mantém a ISVP presente, ativa e relevante — com estratégia e produção integradas.</p>
+
+  <div class="gestao-card reveal reveal-delay-3">
+    <div class="gestao-left">
+      <h3>Presença contínua<br><em>sem complicar.</em></h3>
+      <p>Gestão completa de social media, anúncios e produção gráfica mensal. Você foca no instituto. A gente cuida da comunicação.</p>
+      <div class="gestao-preco">
+        R$ 1.800
+        <small>por mês · contrato contínuo</small>
+      </div>
+    </div>
+    <div class="gestao-items">
+      <div class="g-item">
+        <div class="g-icon">📱</div>
+        2 ações semanais de social media — Instagram e/ou LinkedIn
+      </div>
+      <div class="g-item">
+        <div class="g-icon">📊</div>
+        Gestão de Meta Ads — estratégia, criação e otimização de anúncios
+      </div>
+      <div class="g-item">
+        <div class="g-icon">🎨</div>
+        4 ações gráficas mensais — materiais institucionais e criativos
+      </div>
+      <div class="g-item">
+        <div class="g-icon">📈</div>
+        Relatório mensal de desempenho e ajustes estratégicos
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- PRAZO -->
+<section style="padding-top: 60px; padding-bottom: 60px;">
+  <div class="prazo-bar reveal">
+    <div class="prazo-icon">⏱</div>
+    <div>
+      <h4>Prazo de entrega — 30 dias corridos</h4>
+      <p>Após aprovação da proposta e assinatura do contrato, todo o Bloco 01 (Branding + Conteúdo de Marca) e o Bloco 02 (Site) são entregues dentro de 30 dias. A Gestão Mensal inicia após o lançamento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <h2 class="reveal">Pronto para<br><em>construir juntos?</em></h2>
+  <p class="reveal reveal-delay-1">A Ender está pronta para transformar o Instituto Saúde Vida Plena em uma marca que o setor público vai reconhecer e confiar.</p>
+  <div class="cta-btns reveal reveal-delay-2">
+    <a href="https://wa.me/5548999999999?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20a%20proposta%20ISVP" class="btn-primary" target="_blank">
+      Falar com a Ender →
+    </a>
+    <a href="mailto:contato@agenciaender.com.br" class="btn-secondary">
+      Enviar e-mail
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ENDER</div>
+  <p>Proposta exclusiva para ISVP — Instituto Saúde Vida Plena · 2026</p>
+  <p><a href="mailto:contato@agenciaender.com.br">contato@agenciaender.com.br</a></p>
+</footer>
+
+<script>
+  // ── CURSOR ──
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mX = 0, mY = 0, rX = 0, rY = 0;
+  document.addEventListener('mousemove', e => {
+    mX = e.clientX; mY = e.clientY;
+    cursor.style.transform = `translate(${mX - 6}px, ${mY - 6}px)`;
+  });
+  (function animRing() {
+    rX += (mX - rX) * 0.12;
+    rY += (mY - rY) * 0.12;
+    ring.style.transform = `translate(${rX - 20}px, ${rY - 20}px)`;
+    requestAnimationFrame(animRing);
+  })();
+
+  // ── SCROLL REVEAL ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── BLOCO ACCORDION ──
+  function toggleBloco(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
